@@ -5,12 +5,26 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import init from "./framework/core";
 import makeLogger from "./framework/logger";
+import { html, render } from "lit-html";
 
-function render(state, { actions }) {
+function renderReact(state, { actions }) {
   ReactDOM.render(
     <App state={state} actions={actions} />,
     document.getElementById("root")
   );
+}
+
+const litApp = ({ state, actions }) => html`
+  <div>
+    Counter: ${state}
+    <br />
+    <button @click=${actions.inc}>+</button>
+    <button @click=${actions.dec}>-</button>
+  </div>
+`;
+
+function renderLit(state, { actions }) {
+  render(litApp({ state, actions }), document.getElementById("lit"));
 }
 
 init({
@@ -19,7 +33,7 @@ init({
     inc: state => state + 1,
     dec: state => state - 1
   },
-  sideEffects: [render, makeLogger()]
+  sideEffects: [renderReact, renderLit, makeLogger()]
 });
 
 // If you want your app to work offline and load faster, you can change
