@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import init from "./framework/core";
+import makeLogger from "./framework/logger";
 
 function render(state, { actions }) {
   ReactDOM.render(
@@ -12,35 +13,13 @@ function render(state, { actions }) {
   );
 }
 
-const log = (function makeLogger() {
-  let previousState;
-
-  return (state, { actionName, value }) => {
-    console.groupCollapsed(
-      `%caction %c${actionName}`,
-      "color: gray; font-weight: lighter;",
-      "color: inherit; font-weight: bold;"
-    );
-    console.log(
-      "%cprev state",
-      "color: #9E9E9E; font-weight: bold;",
-      previousState
-    );
-    console.log("%caction", "color: #03A9F4; font-weight: bold;", value);
-    console.log("%cnext state", "color: #4CAF50; font-weight: bold;", state);
-    console.groupEnd();
-
-    previousState = state;
-  };
-})();
-
 init({
   state: 0,
   actions: {
     inc: state => state + 1,
     dec: state => state - 1
   },
-  sideEffects: [render, log]
+  sideEffects: [render, makeLogger()]
 });
 
 // If you want your app to work offline and load faster, you can change
