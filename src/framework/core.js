@@ -1,12 +1,12 @@
 import { curry } from "ramda";
 
-export default function({ state, actions, sideEffects }) {
+export default function({ state, actions, subscribers }) {
   let currentState = state;
   let boundActions;
 
-  function executeSideEffects({ actionName, value } = {}) {
-    sideEffects.forEach(sideEffect =>
-      sideEffect(currentState, { actions: boundActions, actionName, value })
+  function notifySubscribers({ actionName, value } = {}) {
+    subscribers.forEach(subscriber =>
+      subscriber(currentState, { actions: boundActions, actionName, value })
     );
   }
 
@@ -28,12 +28,12 @@ export default function({ state, actions, sideEffects }) {
 
         currentState = newState;
 
-        executeSideEffects({ actionName, value });
+        notifySubscribers({ actionName, value });
       }
     ])
   );
 
-  executeSideEffects();
+  notifySubscribers();
 
   return boundActions;
 }

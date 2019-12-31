@@ -35,7 +35,7 @@ init({
     inc: state => state + 1,
     dec: state => state - 1
   },
-  sideEffects: [renderReact, renderLit, makeLogger()]
+  subscribers: [renderReact, renderLit, makeLogger()]
 });
 
 function renderBoredApp(state, { actions }) {
@@ -113,7 +113,7 @@ init({
     },
     receiveActivity: ({ data }, state) => ({ ...state, activity: data })
   },
-  sideEffects: [renderBoredApp, saveStateToLocalStorage, makeLogger()]
+  subscribers: [renderBoredApp, saveStateToLocalStorage, makeLogger()]
 });
 
 // If you want your app to work offline and load faster, you can change
