@@ -11,26 +11,28 @@ export default function({ state, actions, subscribers }) {
   }
 
   boundActions = Object.fromEntries(
-    Object.entries(actions).map(([actionName, action]) => [
-      actionName,
-      function boundAction(value) {
-        const curriedAction = curry(action);
+    Object.entries(actions).map(([actionName, action]) => {
+      const curriedAction = curry(action);
 
-        function getNewState() {
-          const newState = curriedAction(currentState);
+      return [
+        actionName,
+        function boundAction(value) {
+          function getNewState() {
+            const newState = curriedAction(currentState);
 
-          return typeof newState === "function"
-            ? curriedAction(value)(currentState)
-            : newState;
+            return typeof newState === "function"
+              ? curriedAction(value)(currentState)
+              : newState;
+          }
+
+          const newState = getNewState();
+
+          currentState = newState;
+
+          notifySubscribers({ actionName, value });
         }
-
-        const newState = getNewState();
-
-        currentState = newState;
-
-        notifySubscribers({ actionName, value });
-      }
-    ])
+      ];
+    })
   );
 
   notifySubscribers();
