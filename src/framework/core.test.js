@@ -49,8 +49,8 @@ it("passes value to actions", () => {
   const { add, subtract } = init({
     state: 0,
     actions: {
-      add: (state, value) => state + value,
-      subtract: (state, value) => state - value
+      add: (value, state) => state + value,
+      subtract: (value, state) => state - value
     },
     sideEffects: [sideEffect]
   });
@@ -59,6 +59,72 @@ it("passes value to actions", () => {
   subtract(8);
 
   expect(sideEffect.mock.calls[2][0]).toBe(-4);
+});
+
+it("allows to pass undefined to actions", () => {
+  const sideEffect = jest.fn();
+
+  const { test } = init({
+    state: 0,
+    actions: {
+      test: (value, state) => [value, state]
+    },
+    sideEffects: [sideEffect]
+  });
+
+  test(undefined);
+
+  expect(sideEffect.mock.calls[1][0]).toEqual([undefined, 0]);
+});
+
+it("works with manually curried actions", () => {
+  const sideEffect = jest.fn();
+
+  const { add, subtract } = init({
+    state: 0,
+    actions: {
+      add: value => state => state + value,
+      subtract: value => state => state - value
+    },
+    sideEffects: [sideEffect]
+  });
+
+  add(4);
+  subtract(8);
+
+  expect(sideEffect.mock.calls[2][0]).toBe(-4);
+});
+
+it("doesn't pass value to actions that don't accept it", () => {
+  const sideEffect1 = jest.fn();
+
+  const { inc } = init({
+    state: 0,
+    actions: {
+      inc: state => state + 1
+    },
+    sideEffects: [sideEffect1]
+  });
+
+  inc("foo");
+
+  expect(sideEffect1.mock.calls[1][0]).toBe(1);
+});
+
+it("works with unnecessarily curried actions", () => {
+  const sideEffect1 = jest.fn();
+
+  const { inc } = init({
+    state: 0,
+    actions: {
+      inc: () => state => state + 1
+    },
+    sideEffects: [sideEffect1]
+  });
+
+  inc();
+
+  expect(sideEffect1.mock.calls[1][0]).toBe(1);
 });
 
 it("passes actions to side effects", done => {
@@ -95,8 +161,8 @@ it("passes current action name and value to side effects", () => {
   const { add, subtract } = init({
     state: 0,
     actions: {
-      add: (state, value) => state + value,
-      subtract: (state, value) => state - value
+      add: (value, state) => state + value,
+      subtract: (value, state) => state - value
     },
     sideEffects: [sideEffect1, sideEffect2]
   });

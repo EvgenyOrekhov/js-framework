@@ -58,10 +58,10 @@ function saveStateToLocalStorage(state) {
 init({
   state: localStorageManager.get(),
   actions: {
-    setAccessibility: (state, accessibility) => ({ ...state, accessibility }),
-    setType: (state, type) => ({ ...state, type }),
-    setParticipants: (state, participants) => ({ ...state, participants }),
-    setPrice: (state, price) => ({ ...state, price }),
+    setAccessibility: (accessibility, state) => ({ ...state, accessibility }),
+    setType: (type, state) => ({ ...state, type }),
+    setParticipants: (participants, state) => ({ ...state, participants }),
+    setPrice: (price, state) => ({ ...state, price }),
     reset: state => ({
       ...state,
       accessibility: undefined,
@@ -111,7 +111,7 @@ init({
         }
       };
     },
-    receiveActivity: (state, { data }) => ({ ...state, activity: data })
+    receiveActivity: ({ data }, state) => ({ ...state, activity: data })
   },
   sideEffects: [renderBoredApp, saveStateToLocalStorage, makeLogger()]
 });

@@ -1,3 +1,5 @@
+import { curry } from "ramda";
+
 export default function({ state, actions, sideEffects }) {
   let currentState = state;
   let boundActions;
@@ -12,7 +14,17 @@ export default function({ state, actions, sideEffects }) {
     Object.entries(actions).map(([actionName, action]) => [
       actionName,
       function boundAction(value) {
-        const newState = action(currentState, value);
+        const curriedAction = curry(action);
+
+        function getNewState() {
+          const newState = curriedAction(currentState);
+
+          return typeof newState === "function"
+            ? curriedAction(value)(currentState)
+            : newState;
+        }
+
+        const newState = getNewState();
 
         currentState = newState;
 
