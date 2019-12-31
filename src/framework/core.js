@@ -17,15 +17,14 @@ export default function({ state, actions, subscribers }) {
       return [
         actionName,
         function boundAction(value) {
-          function getNewState() {
-            const newState = curriedAction(currentState);
+          const partiallyAppliedActionOrNewState = curriedAction(currentState);
 
-            return typeof newState === "function"
-              ? curriedAction(value)(currentState)
-              : newState;
-          }
-
-          const newState = getNewState();
+          const newState =
+            typeof partiallyAppliedActionOrNewState === "function"
+              ? // Turns out we have a binary action here.
+                // Reapplying the arguments in the correct order:
+                curriedAction(value)(currentState)
+              : partiallyAppliedActionOrNewState;
 
           currentState = newState;
 
