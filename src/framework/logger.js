@@ -14,7 +14,7 @@ export default function makeLogger() {
       "color: #9E9E9E; font-weight: bold;",
       previousState
     );
-    console.log("%caction", "color: #03A9F4; font-weight: bold;", value);
+    console.log("%cvalue", "color: #03A9F4; font-weight: bold;", value);
     console.log("%cnext state", "color: #4CAF50; font-weight: bold;", state);
     console.log(
       "%cdiff",
