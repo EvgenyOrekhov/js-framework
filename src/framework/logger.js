@@ -1,3 +1,5 @@
+import { diff } from "deep-object-diff";
+
 export default function makeLogger() {
   let previousState;
 
@@ -14,6 +16,11 @@ export default function makeLogger() {
     );
     console.log("%caction", "color: #03A9F4; font-weight: bold;", value);
     console.log("%cnext state", "color: #4CAF50; font-weight: bold;", state);
+    console.log(
+      "%cdiff",
+      "color: #E8A400; font-weight: bold;",
+      diff(previousState, state)
+    );
     console.groupEnd();
 
     previousState = state;
