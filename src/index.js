@@ -6,6 +6,7 @@ import init from "./framework/core";
 import makeLogger from "./framework/logger";
 import makeLocalStorageManager from "./framework/localStorageManager";
 import { html, render } from "lit-html";
+import m from "mithril";
 
 init({
   state: 0,
@@ -36,6 +37,16 @@ init({
         `,
         document.getElementById("lit")
       );
+    },
+
+    function rendeMithril({ state, actions }) {
+      m.mount(document.getElementById("mithril"), {
+        view: () => [
+          m("h1", state),
+          m("button", { onclick: actions.inc }, "+"),
+          m("button", { onclick: actions.dec }, "-")
+        ]
+      });
     }
   ]
 });
