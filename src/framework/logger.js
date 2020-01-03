@@ -1,14 +1,23 @@
 import { diff } from "deep-object-diff";
 
-export default function makeLogger() {
+export default function makeLogger({ name } = {}) {
   let previousState;
 
   return (state, { actionName, value }) => {
-    console.groupCollapsed(
-      `%caction %c${actionName}`,
-      "color: gray; font-weight: lighter;",
-      "color: inherit; font-weight: bold;"
-    );
+    if (name === undefined) {
+      console.groupCollapsed(
+        `%caction %c${actionName}`,
+        "color: gray; font-weight: lighter;",
+        "font-weight: bold;"
+      );
+    } else {
+      console.groupCollapsed(
+        `%c${name} %caction %c${actionName}`,
+        "font-weight: bold;",
+        "color: gray; font-weight: lighter;",
+        "font-weight: bold;"
+      );
+    }
     console.log(
       "%cprev state",
       "color: #9E9E9E; font-weight: bold;",
