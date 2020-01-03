@@ -4,7 +4,12 @@ export default function({ state, actions, subscribers }) {
 
   function notifySubscribers({ actionName, value } = {}) {
     subscribers.forEach(subscriber =>
-      subscriber(currentState, { actions: boundActions, actionName, value })
+      subscriber({
+        state: currentState,
+        actions: boundActions,
+        actionName,
+        value
+      })
     );
   }
 

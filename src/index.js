@@ -9,7 +9,7 @@ import makeLogger from "./framework/logger";
 import makeLocalStorageManager from "./framework/localStorageManager";
 import { html, render } from "lit-html";
 
-function renderReact(state, { actions }) {
+function renderReact({ state, actions }) {
   ReactDOM.render(
     <App state={state} actions={actions} />,
     document.getElementById("root")
@@ -25,7 +25,7 @@ const litApp = ({ state, actions }) => html`
   </div>
 `;
 
-function renderLit(state, { actions }) {
+function renderLit({ state, actions }) {
   render(litApp({ state, actions }), document.getElementById("lit"));
 }
 
@@ -38,7 +38,7 @@ init({
   subscribers: [renderReact, renderLit, makeLogger({ name: "Counter" })]
 });
 
-function renderBoredApp(state, { actions }) {
+function renderBoredApp({ state, actions }) {
   ReactDOM.render(
     <BoredApp state={state} actions={actions} />,
     document.getElementById("bored")
@@ -51,7 +51,7 @@ function getStorableState(state) {
 
 const localStorageManager = makeLocalStorageManager({ key: "bored" });
 
-function saveStateToLocalStorage(state) {
+function saveStateToLocalStorage({ state }) {
   localStorageManager.set(getStorableState(state));
 }
 

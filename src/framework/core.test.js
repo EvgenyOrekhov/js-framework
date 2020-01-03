@@ -14,9 +14,9 @@ it("initializes", () => {
   });
 
   expect(subscriber1.mock.calls.length).toBe(1);
-  expect(subscriber1.mock.calls[0][0]).toBe(0);
+  expect(subscriber1.mock.calls[0][0].state).toBe(0);
   expect(subscriber2.mock.calls.length).toBe(1);
-  expect(subscriber2.mock.calls[0][0]).toBe(0);
+  expect(subscriber2.mock.calls[0][0].state).toBe(0);
 });
 
 it("returns bound actions", () => {
@@ -38,9 +38,9 @@ it("returns bound actions", () => {
   dec();
 
   expect(subscriber1.mock.calls.length).toBe(5);
-  expect(subscriber1.mock.calls[4][0]).toBe(2);
+  expect(subscriber1.mock.calls[4][0].state).toBe(2);
   expect(subscriber2.mock.calls.length).toBe(5);
-  expect(subscriber2.mock.calls[4][0]).toBe(2);
+  expect(subscriber2.mock.calls[4][0].state).toBe(2);
 });
 
 it("passes value to actions", () => {
@@ -58,7 +58,7 @@ it("passes value to actions", () => {
   add(4);
   subtract(8);
 
-  expect(subscriber.mock.calls[2][0]).toBe(-4);
+  expect(subscriber.mock.calls[2][0].state).toBe(-4);
 });
 
 it("allows to pass undefined to actions", () => {
@@ -74,7 +74,7 @@ it("allows to pass undefined to actions", () => {
 
   test(undefined);
 
-  expect(subscriber.mock.calls[1][0]).toEqual([undefined, 0]);
+  expect(subscriber.mock.calls[1][0].state).toEqual([undefined, 0]);
 });
 
 it("works with manually curried actions", () => {
@@ -92,7 +92,7 @@ it("works with manually curried actions", () => {
   add(4);
   subtract(8);
 
-  expect(subscriber.mock.calls[2][0]).toBe(-4);
+  expect(subscriber.mock.calls[2][0].state).toBe(-4);
 });
 
 it("doesn't pass value to actions that don't accept it", () => {
@@ -108,7 +108,7 @@ it("doesn't pass value to actions that don't accept it", () => {
 
   inc("foo");
 
-  expect(subscriber1.mock.calls[1][0]).toBe(1);
+  expect(subscriber1.mock.calls[1][0].state).toBe(1);
 });
 
 it("works with unnecessarily curried actions", () => {
@@ -124,22 +124,22 @@ it("works with unnecessarily curried actions", () => {
 
   inc();
 
-  expect(subscriber1.mock.calls[1][0]).toBe(1);
+  expect(subscriber1.mock.calls[1][0].state).toBe(1);
 });
 
 it("passes actions to side effects", done => {
-  const subscriber1 = jest.fn((ignore, { actions }) => {
+  const subscriber1 = jest.fn(({ actions }) => {
     setTimeout(actions.inc, 0);
     setTimeout(actions.inc, 0);
     setTimeout(actions.inc, 0);
   });
-  const subscriber2 = jest.fn((ignore, { actions }) => {
+  const subscriber2 = jest.fn(({ actions }) => {
     setTimeout(actions.dec, 0);
     setTimeout(() => {
       expect(subscriber1.mock.calls.length).toBe(5);
-      expect(subscriber1.mock.calls[4][0]).toBe(2);
+      expect(subscriber1.mock.calls[4][0].state).toBe(2);
       expect(subscriber2.mock.calls.length).toBe(5);
-      expect(subscriber2.mock.calls[4][0]).toBe(2);
+      expect(subscriber2.mock.calls[4][0].state).toBe(2);
       done();
     }, 0);
   });
@@ -170,12 +170,12 @@ it("passes current action name and value to side effects", () => {
   add(4);
   subtract(8);
 
-  expect(subscriber1.mock.calls[1][1].actionName).toBe("add");
-  expect(subscriber1.mock.calls[1][1].value).toBe(4);
-  expect(subscriber1.mock.calls[2][1].actionName).toBe("subtract");
-  expect(subscriber1.mock.calls[2][1].value).toBe(8);
-  expect(subscriber2.mock.calls[1][1].actionName).toBe("add");
-  expect(subscriber2.mock.calls[1][1].value).toBe(4);
-  expect(subscriber2.mock.calls[2][1].actionName).toBe("subtract");
-  expect(subscriber2.mock.calls[2][1].value).toBe(8);
+  expect(subscriber1.mock.calls[1][0].actionName).toBe("add");
+  expect(subscriber1.mock.calls[1][0].value).toBe(4);
+  expect(subscriber1.mock.calls[2][0].actionName).toBe("subtract");
+  expect(subscriber1.mock.calls[2][0].value).toBe(8);
+  expect(subscriber2.mock.calls[1][0].actionName).toBe("add");
+  expect(subscriber2.mock.calls[1][0].value).toBe(4);
+  expect(subscriber2.mock.calls[2][0].actionName).toBe("subtract");
+  expect(subscriber2.mock.calls[2][0].value).toBe(8);
 });

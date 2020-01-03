@@ -3,7 +3,7 @@ import { diff } from "deep-object-diff";
 export default function makeLogger({ name } = {}) {
   let previousState;
 
-  return (state, { actionName, value }) => {
+  return ({ state, actionName, value }) => {
     if (name === undefined) {
       console.groupCollapsed(
         `%caction %c${actionName}`,
