@@ -1,5 +1,4 @@
 import React from "react";
-import "./App.css";
 
 const accessibilities = ["any", "easy", "moderate", "hard"];
 const types = [
@@ -51,8 +50,8 @@ function App({ state, actions }) {
   }
 
   return (
-    <div>
-      Bored App
+    <>
+      <h1>Bored App</h1>
       <form onSubmit={handleRandomActivityFormSubmit}>
         <button>Get Random Activity</button>
       </form>
@@ -84,7 +83,7 @@ function App({ state, actions }) {
           Reset
         </button>
       </form>
-    </div>
+    </>
   );
 }
 
