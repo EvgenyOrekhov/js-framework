@@ -1,5 +1,3 @@
-import { curry } from "ramda";
-
 export default function({ state, actions, subscribers }) {
   let currentState = state;
   let boundActions;
@@ -11,27 +9,28 @@ export default function({ state, actions, subscribers }) {
   }
 
   boundActions = Object.fromEntries(
-    Object.entries(actions).map(([actionName, action]) => {
-      const curriedAction = curry(action);
+    Object.entries(actions).map(([actionName, action]) => [
+      actionName,
+      function boundAction(value) {
+        function getNewState() {
+          if (action.length === 2) {
+            return action(value, currentState);
+          }
 
-      return [
-        actionName,
-        function boundAction(value) {
-          const partiallyAppliedActionOrNewState = curriedAction(currentState);
+          const partiallyAppliedActionOrNewState = action(currentState);
 
-          const newState =
-            typeof partiallyAppliedActionOrNewState === "function"
-              ? // Turns out we have a binary action here.
-                // Reapplying the arguments in the correct order:
-                curriedAction(value)(currentState)
-              : partiallyAppliedActionOrNewState;
-
-          currentState = newState;
-
-          notifySubscribers({ actionName, value });
+          return typeof partiallyAppliedActionOrNewState === "function"
+            ? // Turns out we have a curried action here.
+              // Reapplying arguments in the correct order:
+              action(value)(currentState)
+            : partiallyAppliedActionOrNewState;
         }
-      ];
-    })
+
+        currentState = getNewState();
+
+        notifySubscribers({ actionName, value });
+      }
+    ])
   );
 
   notifySubscribers();
