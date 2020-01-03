@@ -127,7 +127,7 @@ it("works with unnecessarily curried actions", () => {
   expect(subscriber1.mock.calls[1][0].state).toBe(1);
 });
 
-it("passes actions to side effects", done => {
+it("passes actions to subscribers", done => {
   const subscriber1 = jest.fn(({ actions }) => {
     setTimeout(actions.inc, 0);
     setTimeout(actions.inc, 0);
@@ -154,7 +154,7 @@ it("passes actions to side effects", done => {
   });
 });
 
-it("passes current action name and value to side effects", () => {
+it("passes current action name and value to subscribers", () => {
   const subscriber1 = jest.fn();
   const subscriber2 = jest.fn();
 
