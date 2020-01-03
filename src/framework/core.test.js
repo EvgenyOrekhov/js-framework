@@ -179,3 +179,25 @@ it("passes current action name and value to subscribers", () => {
   expect(subscriber2.mock.calls[2][0].actionName).toBe("subtract");
   expect(subscriber2.mock.calls[2][0].value).toBe(8);
 });
+
+it("cancels notifying subscribers if an action was called by one of them", () => {
+  const subscriber1 = jest.fn(({ state, actions }) => {
+    if (state === 0) {
+      actions.inc();
+    }
+  });
+  const subscriber2 = jest.fn();
+
+  init({
+    state: 0,
+    actions: {
+      inc: state => state + 1
+    },
+    subscribers: [subscriber1, subscriber2]
+  });
+
+  expect(subscriber1.mock.calls.length).toBe(2);
+  expect(subscriber1.mock.calls[1][0].state).toBe(1);
+  expect(subscriber2.mock.calls.length).toBe(1);
+  expect(subscriber2.mock.calls[0][0].state).toBe(1);
+});

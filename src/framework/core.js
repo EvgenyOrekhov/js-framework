@@ -1,16 +1,23 @@
 export default function({ state, actions, subscribers }) {
   let currentState = state;
+  let shouldNotifySubscribers;
   let boundActions;
 
   function notifySubscribers({ actionName, value } = {}) {
-    subscribers.forEach(subscriber =>
+    shouldNotifySubscribers = true;
+
+    subscribers.every(subscriber => {
       subscriber({
         state: currentState,
         actions: boundActions,
         actionName,
         value
-      })
-    );
+      });
+
+      return shouldNotifySubscribers;
+    });
+
+    shouldNotifySubscribers = false;
   }
 
   boundActions = Object.fromEntries(
