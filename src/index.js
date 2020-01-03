@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import BoredApp from "./BoredApp";
 import * as serviceWorker from "./serviceWorker";
 import init from "./framework/core";
+import makeHttpHandler from "./framework/http";
 import makeLogger from "./framework/logger";
 import makeLocalStorageManager from "./framework/localStorageManager";
 import { html, render } from "lit-html";
@@ -59,7 +60,7 @@ function renderBoredApp({ state, actions }) {
 }
 
 function getStorableState(state) {
-  return { ...state, requests: undefined };
+  return { ...state, $http: undefined, activity: undefined };
 }
 
 const localStorageManager = makeLocalStorageManager({ key: "bored" });
@@ -80,11 +81,12 @@ init({
       accessibility: undefined,
       type: undefined,
       participants: undefined,
-      price: undefined
+      price: undefined,
+      activity: undefined
     }),
     getRandomActivity: state => ({
       ...state,
-      requests: { receiveActivity: { url: "/" } }
+      $http: { receiveActivity: { url: "/activity" } }
     }),
     getActivity: state => {
       const { accessibility, type, participants, price } = state;
@@ -101,20 +103,20 @@ init({
 
       return {
         ...state,
-        requests: {
+        $http: {
           receiveActivity: {
-            url: "/",
+            url: "/activity",
             params: {
               ...(accessibility
                 ? {
-                    minAccessibility: accessibilities[accessibility].min,
-                    maxAccessibility: accessibilities[accessibility].max
+                    minaccessibility: accessibilities[accessibility].min,
+                    maxaccessibility: accessibilities[accessibility].max
                   }
                 : {}),
               ...(price
                 ? {
-                    minPrice: prices[price].min,
-                    maxPrice: prices[price].max
+                    minprice: prices[price].min,
+                    maxprice: prices[price].max
                   }
                 : {}),
               type,
@@ -124,12 +126,17 @@ init({
         }
       };
     },
-    receiveActivity: ({ data }, state) => ({ ...state, activity: data })
+    receiveActivity: ({ data }, state) => ({
+      ...state,
+      activity: data,
+      $http: { ...state.$http, receiveActivity: undefined }
+    })
   },
   subscribers: [
     makeLogger({ name: "Bored App" }),
     renderBoredApp,
-    saveStateToLocalStorage
+    saveStateToLocalStorage,
+    makeHttpHandler({ baseURL: "https://www.boredapi.com/api/" })
   ]
 });
 
