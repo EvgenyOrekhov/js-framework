@@ -18,6 +18,7 @@ export default function makeHttpHandler(config) {
       .forEach(([actionName, request]) => {
         instance.request(request).then(response => {
           requests = { ...requests, [actionName]: undefined };
+          actions.$http({ [actionName]: request });
           actions[actionName](response);
         });
 

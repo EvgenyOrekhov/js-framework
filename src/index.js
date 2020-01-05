@@ -4,6 +4,7 @@ import BoredApp from "./BoredApp";
 import * as serviceWorker from "./serviceWorker";
 import init from "./framework/core";
 import makeHttpHandler from "./framework/http";
+import httpAction from "./framework/http-action";
 import makeLogger from "./framework/logger";
 import makeLocalStorageManager from "./framework/localStorageManager";
 import { html, render } from "lit-html";
@@ -72,6 +73,7 @@ function saveStateToLocalStorage({ state }) {
 init({
   state: localStorageManager.get(),
   actions: {
+    $http: httpAction,
     setAccessibility: (accessibility, state) => ({ ...state, accessibility }),
     setType: (type, state) => ({ ...state, type }),
     setParticipants: (participants, state) => ({ ...state, participants }),
@@ -126,11 +128,7 @@ init({
         }
       };
     },
-    receiveActivity: ({ data }, state) => ({
-      ...state,
-      activity: data,
-      $http: { ...state.$http, receiveActivity: undefined }
-    })
+    receiveActivity: ({ data }, state) => ({ ...state, activity: data })
   },
   subscribers: [
     makeLogger({ name: "Bored App" }),
