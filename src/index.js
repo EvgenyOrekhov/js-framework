@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import BoredApp from "./BoredApp";
 import * as serviceWorker from "./serviceWorker";
-import init from "./framework/core";
+import { init } from "actus";
 import makeHttpHandler from "./framework/http";
 import httpAction from "./framework/http-action";
 import makeLogger from "./framework/logger";
