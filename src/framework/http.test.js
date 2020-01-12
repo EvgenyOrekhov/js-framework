@@ -2,7 +2,7 @@ import nock from "nock";
 
 import makeHttpHandler from "./http";
 import httpAction from "./http-action";
-import init from "./core";
+import { init } from "actus/commonjs";
 
 it("makes HTTP requests", done => {
   const handleHttp = makeHttpHandler();
