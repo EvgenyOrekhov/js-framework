@@ -12,10 +12,12 @@ import m from "mithril";
 
 init({
   state: 0,
+
   actions: {
     inc: state => state + 1,
     dec: state => state - 1
   },
+
   subscribers: [
     makeLogger({ name: "Counter" }),
 
@@ -72,12 +74,18 @@ function saveStateToLocalStorage({ state }) {
 
 init({
   state: localStorageManager.get(),
+
   actions: {
     $http: httpAction,
+
     setAccessibility: (accessibility, state) => ({ ...state, accessibility }),
+
     setType: (type, state) => ({ ...state, type }),
+
     setParticipants: (participants, state) => ({ ...state, participants }),
+
     setPrice: (price, state) => ({ ...state, price }),
+
     reset: state => ({
       ...state,
       accessibility: undefined,
@@ -86,10 +94,12 @@ init({
       price: undefined,
       activity: undefined
     }),
+
     getRandomActivity: state => ({
       ...state,
       $http: { receiveActivity: { url: "/activity" } }
     }),
+
     getActivity: state => {
       const { accessibility, type, participants, price } = state;
       const accessibilities = {
@@ -128,8 +138,10 @@ init({
         }
       };
     },
+
     receiveActivity: ({ data }, state) => ({ ...state, activity: data })
   },
+
   subscribers: [
     makeLogger({ name: "Bored App" }),
     renderBoredApp,
