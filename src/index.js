@@ -43,7 +43,7 @@ init({
       );
     },
 
-    function rendeMithril({ state, actions }) {
+    function renderMithril({ state, actions }) {
       m.mount(document.getElementById("mithril"), {
         view: () => [
           m("h1", state),
