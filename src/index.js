@@ -48,13 +48,11 @@ init({
     },
 
     function renderMithril({ state, actions }) {
-      m.mount(document.getElementById("mithril"), {
-        view: () => [
-          m("h1", state),
-          m("button", { onclick: actions.inc }, "+"),
-          m("button", { onclick: actions.dec }, "-")
-        ]
-      });
+      m.render(document.getElementById("mithril"), [
+        m("h1", state),
+        m("button", { onclick: actions.inc }, "+"),
+        m("button", { onclick: actions.dec }, "-")
+      ]);
     },
 
     (function makeGlimmerRenderer() {
