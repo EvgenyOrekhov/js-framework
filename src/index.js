@@ -9,6 +9,10 @@ import makeLogger from "./framework/logger";
 import makeLocalStorageManager from "./framework/localStorageManager";
 import { html, render } from "lit-html";
 import m from "mithril";
+import { renderComponent } from "@glimmerx/core";
+import Component, { hbs, tracked } from "@glimmerx/component";
+import { service } from "@glimmerx/service";
+import { on } from "@glimmerx/modifier";
 
 init({
   state: 0,
@@ -51,7 +55,48 @@ init({
           m("button", { onclick: actions.dec }, "-")
         ]
       });
-    }
+    },
+
+    (function makeGlimmerRenderer() {
+      class GlimmerCounter extends Component {
+        @service store;
+
+        static template = hbs`
+          <h1>{{this.store.state}}</h1>
+          <button {{on "click" this.store.actions.inc}}>+</button>
+          <button {{on "click" this.store.actions.dec}}>-</button>
+        `;
+      }
+
+      class StoreService {
+        @tracked state;
+
+        constructor({ state, actions }) {
+          this.state = state;
+          this.actions = actions;
+        }
+      }
+
+      let isRendered = false;
+      let store;
+
+      return function renderGlimmer({ state, actions }) {
+        if (!isRendered) {
+          store = new StoreService({ state, actions });
+
+          renderComponent(GlimmerCounter, {
+            element: document.getElementById("glimmer"),
+            services: { store }
+          });
+
+          isRendered = true;
+
+          return;
+        }
+
+        store.state = state;
+      };
+    })()
   ]
 });
 
