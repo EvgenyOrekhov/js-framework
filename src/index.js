@@ -5,7 +5,7 @@ import * as serviceWorker from "./serviceWorker";
 import { init } from "actus";
 import makeHttpHandler from "./framework/http";
 import httpAction from "./framework/http-action";
-import makeLogger from "./framework/logger";
+import makeLogger from "actus-logger";
 import makeLocalStorageManager from "./framework/localStorageManager";
 import { html, render } from "lit-html";
 import m from "mithril";
