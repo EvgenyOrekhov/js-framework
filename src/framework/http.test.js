@@ -131,7 +131,7 @@ it("does not repeat requests", done => {
     },
     actions: {
       $http: httpAction,
-      trigger: state => state,
+      trigger: (igore, state) => state,
       receiveResponse() {
         scope.done();
         done();
@@ -166,7 +166,7 @@ it("clears internal state after request finished", done => {
     },
     actions: {
       $http: httpAction,
-      receiveResponse(state) {
+      receiveResponse(ignore, state) {
         if (state.count === 1) {
           scope.done();
           done();
@@ -213,7 +213,7 @@ it("recognizes different requests with the same name", done => {
     },
     actions: {
       $http: httpAction,
-      baz: state => ({
+      baz: (ignore, state) => ({
         count: state.count + 1,
         $http: {
           receiveResponse: {
@@ -223,7 +223,7 @@ it("recognizes different requests with the same name", done => {
           }
         }
       }),
-      receiveResponse(state) {
+      receiveResponse(ignore, state) {
         if (state.count === 1) {
           scope.done();
           done();
