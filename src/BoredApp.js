@@ -24,19 +24,19 @@ function App({ state, actions }) {
   } = state;
 
   function handleAccessibilityChange({ target }) {
-    actions.setAccessibility(target.value);
+    actions.accessibility.set(target.value);
   }
 
   function handleTypeChange({ target }) {
-    actions.setType(target.value);
+    actions.type.set(target.value);
   }
 
   function handlePriceChange({ target }) {
-    actions.setPrice(target.value);
+    actions.price.set(target.value);
   }
 
   function handleParticipantsChange({ target }) {
-    actions.setParticipants(target.value);
+    actions.participants.set(target.value);
   }
 
   function handleActivityFormSubmit(event) {
@@ -53,6 +53,7 @@ function App({ state, actions }) {
     <>
       <h1>Bored App</h1>
       {activity !== undefined &&
+        Object.keys(activity).length !== 0 &&
         (activity.error ? (
           <h2>{activity.error}</h2>
         ) : (
