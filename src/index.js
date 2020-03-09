@@ -15,10 +15,143 @@ import Component, { hbs, tracked } from "@glimmerx/component";
 import { service } from "@glimmerx/service";
 import { on } from "@glimmerx/modifier";
 
+function reduxDevTools({ name } = {}) {
+  return {
+    actions: {
+      setStateFromDevTools: value => value
+    },
+
+    subscribers: [
+      (function makeReduxDevtoolsSubscriber() {
+        let initialState;
+        let currentState;
+        let devTools;
+
+        function parse(value) {
+          try {
+            return JSON.parse(value);
+          } catch (error) {
+            devTools.error(`Invalid JSON: ${value}`);
+
+            throw error;
+          }
+        }
+
+        function getSlice(object, path) {
+          return path.reduce(
+            (acc, property) =>
+              acc === undefined || acc === null ? undefined : acc[property],
+            object
+          );
+        }
+
+        return function send({ state, actionName, value, actions }) {
+          currentState = state;
+
+          if (devTools === undefined) {
+            initialState = state;
+
+            devTools = window.__REDUX_DEVTOOLS_EXTENSION__.connect({
+              name,
+              actionCreators: actions,
+              actionsBlacklist: ["setStateFromDevTools"],
+              features: {
+                pause: true, // start/pause recording of dispatched actions
+                lock: false, // lock/unlock dispatching actions and side effects
+                persist: false, // persist states on page reloading
+                export: false, // export history of actions in a file
+                import: false, // import history of actions from a file
+                jump: true, // jump back and forth (time travelling)
+                skip: false, // skip (cancel) actions
+                reorder: false, // drag and drop actions in the history list
+                dispatch: true, // dispatch custom actions or action creators
+                test: false // generate tests for the selected actions
+              }
+            });
+
+            devTools.subscribe(message => {
+              if (message.type === "ACTION") {
+                const payload =
+                  typeof message.payload === "string"
+                    ? parse(message.payload)
+                    : message.payload;
+
+                if (payload.name === undefined) {
+                  devTools.error(
+                    `Invalid action: ${message.payload}.
+                    Example: { "name": "foo.bar", "args": ["{ \\"baz\\": \\"qux\\" }"] }`
+                  );
+
+                  return;
+                }
+
+                const action = getSlice(actions, payload.name.split("."));
+
+                if (typeof action === "function") {
+                  action(
+                    Array.isArray(payload.args) && payload.args.length === 0
+                      ? undefined
+                      : parse(payload.args[0])
+                  );
+
+                  return;
+                }
+
+                devTools.error(`Unknown action: ${payload.name}`);
+
+                return;
+              }
+
+              if (message.type === "DISPATCH") {
+                // eslint-disable-next-line default-case
+                switch (message.payload.type) {
+                  case "RESET":
+                    actions.setStateFromDevTools(initialState);
+                    devTools.init(initialState);
+
+                    return;
+                  case "COMMIT":
+                    devTools.init(currentState);
+
+                    return;
+                  case "ROLLBACK":
+                    const commitedState = parse(message.state);
+
+                    actions.setStateFromDevTools(commitedState);
+                    devTools.init(commitedState);
+
+                    return;
+                  case "JUMP_TO_STATE":
+                  case "JUMP_TO_ACTION":
+                    actions.setStateFromDevTools(parse(message.state));
+
+                    return;
+                }
+              }
+            });
+
+            devTools.init(state);
+
+            return;
+          }
+
+          const type = Array.isArray(actionName)
+            ? actionName.join(".")
+            : actionName;
+
+          devTools.send({ type, payload: value }, state);
+        };
+      })()
+    ]
+  };
+}
+
 init([
   logger({ name: "Counter" }),
 
   defaultActions(0),
+
+  reduxDevTools({ name: "Counter" }),
 
   {
     state: 0,
@@ -125,6 +258,8 @@ init([
     price: "",
     activity: {}
   }),
+
+  reduxDevTools({ name: "Bored App" }),
 
   {
     state: localStorageManager.get(),
