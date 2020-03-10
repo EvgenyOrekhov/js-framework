@@ -16,6 +16,13 @@ import { service } from "@glimmerx/service";
 import { on } from "@glimmerx/modifier";
 
 function reduxDevTools({ name } = {}) {
+  if (
+    typeof window === "undefined" ||
+    window.__REDUX_DEVTOOLS_EXTENSION__ === undefined
+  ) {
+    return {};
+  }
+
   return {
     actions: {
       setStateFromDevTools: value => value
