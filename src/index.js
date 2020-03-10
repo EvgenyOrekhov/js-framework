@@ -242,7 +242,16 @@ function getStorableState(state) {
   return { ...state, $http: undefined, activity: undefined };
 }
 
-const localStorageManager = makeLocalStorageManager({ key: "bored" });
+const localStorageManager = makeLocalStorageManager({
+  key: "bored",
+  defaultState: {
+    accessibility: "",
+    type: "",
+    participants: "",
+    price: "",
+    activity: {}
+  }
+});
 
 function saveStateToLocalStorage({ state }) {
   localStorageManager.set(getStorableState(state));
