@@ -7,7 +7,7 @@ import makeHttpHandler from "./framework/http";
 import httpAction from "./framework/http-action";
 import logger from "actus-logger";
 import defaultActions from "actus-default-actions";
-import makeLocalStorageManager from "./framework/localStorageManager";
+import localStoragePlugin from "actus-localstorage";
 import { html, render } from "lit-html";
 import m from "mithril";
 import { renderComponent } from "@glimmerx/core";
@@ -245,40 +245,23 @@ function renderBoredApp({ state, actions }) {
   );
 }
 
-function getStorableState(state) {
-  return { ...state, $http: undefined, activity: undefined };
-}
-
-const localStorageManager = makeLocalStorageManager({
-  key: "bored",
-  defaultState: {
-    accessibility: "",
-    type: "",
-    participants: "",
-    price: "",
-    activity: {}
-  }
-});
-
-function saveStateToLocalStorage({ state }) {
-  localStorageManager.set(getStorableState(state));
-}
+const initialState = {
+  accessibility: "",
+  type: "",
+  participants: "",
+  price: "",
+  activity: {}
+};
 
 init([
   logger({ name: "Bored App" }),
 
-  defaultActions({
-    accessibility: "",
-    type: "",
-    participants: "",
-    price: "",
-    activity: {}
-  }),
+  defaultActions(initialState),
 
   reduxDevTools({ name: "Bored App" }),
 
   {
-    state: localStorageManager.get(),
+    state: initialState,
 
     actions: {
       $http: httpAction,
@@ -332,10 +315,14 @@ init([
 
     subscribers: [
       renderBoredApp,
-      saveStateToLocalStorage,
       makeHttpHandler({ baseURL: "https://www.boredapi.com/api/" })
     ]
-  }
+  },
+
+  localStoragePlugin({
+    key: "bored",
+    selector: state => ({ ...state, $http: undefined, activity: undefined })
+  })
 ]);
 
 // If you want your app to work offline and load faster, you can change
