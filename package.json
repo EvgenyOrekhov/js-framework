@@ -3,23 +3,23 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@craco/craco": "^5.6.3",
-    "@glimmer/bundle-compiler": "^0.48.0",
+    "@craco/craco": "^5.6.4",
+    "@glimmer/bundle-compiler": "^0.50.0",
     "@glimmerx/component": "^0.1.1",
     "@glimmerx/core": "^0.1.10",
     "@glimmerx/modifier": "^0.1.10",
     "@glimmerx/service": "^0.1.10",
-    "actus": "0.1.0-alpha.4",
-    "actus-default-actions": "0.0.0-alpha.4",
-    "actus-localstorage": "0.0.0-alpha.2",
-    "actus-logger": "0.1.0-alpha.2",
-    "actus-redux-devtools": "0.0.0-alpha.1",
+    "actus": "0.2.0-alpha.1",
+    "actus-default-actions": "0.1.0-alpha.0",
+    "actus-localstorage": "0.1.0-alpha.0",
+    "actus-logger": "0.2.0-alpha.0",
+    "actus-redux-devtools": "0.1.0-alpha.0",
     "axios": "^0.19.0",
-    "lit-html": "^1.1.2",
+    "lit-html": "^1.2.1",
     "mithril": "^2.0.4",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.0",
-    "react-scripts": "3.4.0"
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-scripts": "3.4.1"
   },
   "scripts": {
     "start": "craco start",
@@ -43,7 +43,7 @@
     ]
   },
   "devDependencies": {
-    "@glimmerx/babel-plugin-component-templates": "^0.1.9",
-    "nock": "^12.0.2"
+    "@glimmerx/babel-plugin-component-templates": "^0.1.14",
+    "nock": "^12.0.3"
   }
 }
