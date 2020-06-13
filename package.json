@@ -14,7 +14,7 @@
     "actus-localstorage": "0.1.0-alpha.0",
     "actus-logger": "0.2.0-alpha.0",
     "actus-redux-devtools": "0.1.0-alpha.0",
-    "axios": "^0.19.0",
+    "axios": "^0.19.2",
     "lit-html": "^1.2.1",
     "mithril": "^2.0.4",
     "react": "^16.13.1",

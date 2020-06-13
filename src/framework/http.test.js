@@ -3,8 +3,12 @@ import nock from "nock";
 import makeHttpHandler from "./http";
 import httpAction from "./http-action";
 import { init } from "actus/commonjs";
+import axios from "axios";
+import axiosHttpAdapter from "axios/lib/adapters/http";
 
-it("makes HTTP requests", done => {
+axios.defaults.adapter = axiosHttpAdapter;
+
+it("makes HTTP requests", (done) => {
   const handleHttp = makeHttpHandler();
 
   const $http = jest.fn((value, state) => ({}));
@@ -19,9 +23,9 @@ it("makes HTTP requests", done => {
         receiveResponse: {
           url: "/bar",
           method: "get",
-          baseURL: "https://example.com/foo/"
-        }
-      }
+          baseURL: "https://example.com/foo/",
+        },
+      },
     },
     actions: {
       $http,
@@ -33,21 +37,21 @@ it("makes HTTP requests", done => {
           receiveResponse: {
             url: "/bar",
             method: "get",
-            baseURL: "https://example.com/foo/"
-          }
+            baseURL: "https://example.com/foo/",
+          },
         });
 
         scope.done();
         done();
 
         return {};
-      }
+      },
     },
-    subscribers: [handleHttp]
+    subscribers: [handleHttp],
   });
 });
 
-it("is configurable", done => {
+it("is configurable", (done) => {
   const handleHttp = makeHttpHandler({ baseURL: "https://example.com/foo/" });
 
   const scope = nock("https://example.com/foo/")
@@ -59,42 +63,9 @@ it("is configurable", done => {
       $http: {
         receiveResponse: {
           url: "/bar",
-          method: "get"
-        }
-      }
-    },
-    actions: {
-      $http: httpAction,
-      receiveResponse(response, ignore) {
-        expect(response.status).toBe(200);
-        expect(response.data).toEqual({ foo: "bar" });
-
-        scope.done();
-        done();
-
-        return {};
-      }
-    },
-    subscribers: [handleHttp]
-  });
-});
-
-it("ignores undefined", done => {
-  const handleHttp = makeHttpHandler({ baseURL: "https://example.com/foo/" });
-
-  const scope = nock("https://example.com/foo/")
-    .get("/bar")
-    .reply(200, { foo: "bar" });
-
-  init({
-    state: {
-      $http: {
-        receiveResponse: {
-          url: "/bar",
-          method: "get"
+          method: "get",
         },
-        shouldIgnore: undefined
-      }
+      },
     },
     actions: {
       $http: httpAction,
@@ -106,13 +77,46 @@ it("ignores undefined", done => {
         done();
 
         return {};
-      }
+      },
     },
-    subscribers: [handleHttp]
+    subscribers: [handleHttp],
   });
 });
 
-it("does not repeat requests", done => {
+it("ignores undefined", (done) => {
+  const handleHttp = makeHttpHandler({ baseURL: "https://example.com/foo/" });
+
+  const scope = nock("https://example.com/foo/")
+    .get("/bar")
+    .reply(200, { foo: "bar" });
+
+  init({
+    state: {
+      $http: {
+        receiveResponse: {
+          url: "/bar",
+          method: "get",
+        },
+        shouldIgnore: undefined,
+      },
+    },
+    actions: {
+      $http: httpAction,
+      receiveResponse(response, ignore) {
+        expect(response.status).toBe(200);
+        expect(response.data).toEqual({ foo: "bar" });
+
+        scope.done();
+        done();
+
+        return {};
+      },
+    },
+    subscribers: [handleHttp],
+  });
+});
+
+it("does not repeat requests", (done) => {
   const handleHttp = makeHttpHandler();
 
   const scope = nock("https://example.com/foo/")
@@ -125,9 +129,9 @@ it("does not repeat requests", done => {
         receiveResponse: {
           url: "/bar",
           method: "get",
-          baseURL: "https://example.com/foo/"
-        }
-      }
+          baseURL: "https://example.com/foo/",
+        },
+      },
     },
     actions: {
       $http: httpAction,
@@ -137,15 +141,15 @@ it("does not repeat requests", done => {
         done();
 
         return {};
-      }
+      },
     },
-    subscribers: [handleHttp]
+    subscribers: [handleHttp],
   });
 
   trigger();
 });
 
-it("clears internal state after request finished", done => {
+it("clears internal state after request finished", (done) => {
   const handleHttp = makeHttpHandler();
 
   const scope = nock("https://example.com/foo/")
@@ -160,9 +164,9 @@ it("clears internal state after request finished", done => {
         receiveResponse: {
           url: "/bar",
           method: "get",
-          baseURL: "https://example.com/foo/"
-        }
-      }
+          baseURL: "https://example.com/foo/",
+        },
+      },
     },
     actions: {
       $http: httpAction,
@@ -180,17 +184,17 @@ it("clears internal state after request finished", done => {
             receiveResponse: {
               url: "/bar",
               method: "get",
-              baseURL: "https://example.com/foo/"
-            }
-          }
+              baseURL: "https://example.com/foo/",
+            },
+          },
         };
-      }
+      },
     },
-    subscribers: [handleHttp]
+    subscribers: [handleHttp],
   });
 });
 
-it("recognizes different requests with the same name", done => {
+it("recognizes different requests with the same name", (done) => {
   const handleHttp = makeHttpHandler();
 
   const scope = nock("https://example.com/foo/")
@@ -207,9 +211,9 @@ it("recognizes different requests with the same name", done => {
         receiveResponse: {
           url: "/bar",
           method: "get",
-          baseURL: "https://example.com/foo/"
-        }
-      }
+          baseURL: "https://example.com/foo/",
+        },
+      },
     },
     actions: {
       $http: httpAction,
@@ -219,9 +223,9 @@ it("recognizes different requests with the same name", done => {
           receiveResponse: {
             url: "/baz",
             method: "get",
-            baseURL: "https://example.com/foo/"
-          }
-        }
+            baseURL: "https://example.com/foo/",
+          },
+        },
       }),
       receiveResponse(ignore, state) {
         if (state.count === 1) {
@@ -232,9 +236,9 @@ it("recognizes different requests with the same name", done => {
         }
 
         return {};
-      }
+      },
     },
-    subscribers: [handleHttp]
+    subscribers: [handleHttp],
   });
 
   baz();
