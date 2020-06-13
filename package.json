@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.6.4",
-    "@glimmer/bundle-compiler": "^0.50.0",
+    "@glimmer/bundle-compiler": "^0.50.4",
     "@glimmerx/component": "^0.1.1",
     "@glimmerx/core": "^0.1.10",
     "@glimmerx/modifier": "^0.1.10",
