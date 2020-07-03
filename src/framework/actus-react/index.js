@@ -1,18 +1,17 @@
 import React, { useContext } from "react";
 
-let ActusContext = React.createContext();
+const Context = React.createContext();
 
 function Provider(props) {
-  return (
-    <ActusContext.Provider value={props}>
-      {props.children}
-    </ActusContext.Provider>
-  );
+  return <Context.Provider value={props}>{props.children}</Context.Provider>;
 }
 
-function connect(mapStateToProps, mapActionsToProps) {
+function connect(
+  mapStateToProps = (state) => ({ state }),
+  mapActionsToProps = (actions) => ({ actions })
+) {
   return (Component) => (ownProps) => {
-    const { state, actions } = useContext(ActusContext);
+    const { state, actions } = useContext(Context);
 
     const mergedProps = {
       ...ownProps,

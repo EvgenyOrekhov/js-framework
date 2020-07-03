@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import BoredApp from "./BoredApp";
 import ConnectedBoredApp from "./ConnectedBoredApp";
+import ConnectedBoredAppExample from "./ConnectedBoredAppExample";
 import * as serviceWorker from "./serviceWorker";
 import { init } from "actus";
 import makeHttpHandler from "./framework/http";
@@ -16,7 +17,19 @@ import { renderComponent } from "@glimmerx/core";
 import Component, { hbs, tracked } from "@glimmerx/component";
 import { service } from "@glimmerx/service";
 import { on } from "@glimmerx/modifier";
-import { Provider } from "./framework/actus-react";
+import { Provider, connect } from "./framework/actus-react";
+
+function CounterApp({ state, actions }) {
+  return (
+    <>
+      <h1>{state}</h1>
+      <button onClick={actions.increment}>+</button>
+      <button onClick={actions.decrement}>-</button>
+    </>
+  );
+}
+
+const ConnectedCounterApp = connect()(CounterApp);
 
 init([
   logger({ name: "Counter" }),
@@ -37,6 +50,15 @@ init([
             <button onClick={actions.decrement}>-</button>
           </>,
           document.getElementById("root")
+        );
+      },
+
+      function renderConnectedReact(args) {
+        ReactDOM.render(
+          <Provider {...args}>
+            <ConnectedCounterApp />
+          </Provider>,
+          document.getElementById("root-connected")
         );
       },
 
@@ -119,6 +141,15 @@ function renderConnectedBoredApp(args) {
   );
 }
 
+function renderConnectedBoredAppExample(args) {
+  ReactDOM.render(
+    <Provider {...args}>
+      <ConnectedBoredAppExample />
+    </Provider>,
+    document.getElementById("bored-connected-example")
+  );
+}
+
 const initialState = {
   accessibility: "",
   type: "",
@@ -190,6 +221,7 @@ init([
     subscribers: [
       renderBoredApp,
       renderConnectedBoredApp,
+      renderConnectedBoredAppExample,
       makeHttpHandler({ baseURL: "https://www.boredapi.com/api/" }),
     ],
   },
