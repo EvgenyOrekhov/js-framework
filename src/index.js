@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import BoredApp from "./BoredApp";
+import ConnectedBoredApp from "./ConnectedBoredApp";
 import * as serviceWorker from "./serviceWorker";
 import { init } from "actus";
 import makeHttpHandler from "./framework/http";
@@ -15,6 +16,7 @@ import { renderComponent } from "@glimmerx/core";
 import Component, { hbs, tracked } from "@glimmerx/component";
 import { service } from "@glimmerx/service";
 import { on } from "@glimmerx/modifier";
+import { Provider } from "./framework/actus-react";
 
 init([
   logger({ name: "Counter" }),
@@ -53,7 +55,7 @@ init([
         m.render(document.getElementById("mithril"), [
           m("h1", state),
           m("button", { onclick: actions.increment }, "+"),
-          m("button", { onclick: actions.decrement }, "-")
+          m("button", { onclick: actions.decrement }, "-"),
         ]);
       },
 
@@ -86,7 +88,7 @@ init([
 
             renderComponent(GlimmerCounter, {
               element: document.getElementById("glimmer"),
-              services: { store }
+              services: { store },
             });
 
             isRendered = true;
@@ -96,9 +98,9 @@ init([
 
           store.state = state;
         };
-      })()
-    ]
-  }
+      })(),
+    ],
+  },
 ]);
 
 function renderBoredApp({ state, actions }) {
@@ -108,12 +110,21 @@ function renderBoredApp({ state, actions }) {
   );
 }
 
+function renderConnectedBoredApp(args) {
+  ReactDOM.render(
+    <Provider {...args}>
+      <ConnectedBoredApp />
+    </Provider>,
+    document.getElementById("bored-connected")
+  );
+}
+
 const initialState = {
   accessibility: "",
   type: "",
   participants: "",
   price: "",
-  activity: {}
+  activity: {},
 };
 
 init([
@@ -131,7 +142,7 @@ init([
 
       getRandomActivity: (ignore, state) => ({
         ...state,
-        $http: { receiveActivity: { url: "/activity" } }
+        $http: { receiveActivity: { url: "/activity" } },
       }),
 
       getActivity: (ignore, state) => {
@@ -139,12 +150,12 @@ init([
         const accessibilities = {
           easy: { min: 0, max: 0.33 },
           moderate: { min: 0.34, max: 0.66 },
-          hard: { min: 0.67, max: 1 }
+          hard: { min: 0.67, max: 1 },
         };
         const prices = {
           low: { min: 0, max: 0.33 },
           moderate: { min: 0.34, max: 0.66 },
-          high: { min: 0.67, max: 1 }
+          high: { min: 0.67, max: 1 },
         };
 
         return {
@@ -156,36 +167,37 @@ init([
                 ...(accessibility
                   ? {
                       minaccessibility: accessibilities[accessibility].min,
-                      maxaccessibility: accessibilities[accessibility].max
+                      maxaccessibility: accessibilities[accessibility].max,
                     }
                   : {}),
                 ...(price
                   ? {
                       minprice: prices[price].min,
-                      maxprice: prices[price].max
+                      maxprice: prices[price].max,
                     }
                   : {}),
                 type,
-                participants
-              }
-            }
-          }
+                participants,
+              },
+            },
+          },
         };
       },
 
-      receiveActivity: ({ data }, state) => ({ ...state, activity: data })
+      receiveActivity: ({ data }, state) => ({ ...state, activity: data }),
     },
 
     subscribers: [
       renderBoredApp,
-      makeHttpHandler({ baseURL: "https://www.boredapi.com/api/" })
-    ]
+      renderConnectedBoredApp,
+      makeHttpHandler({ baseURL: "https://www.boredapi.com/api/" }),
+    ],
   },
 
   localStoragePlugin({
     key: "bored",
-    selector: state => ({ ...state, $http: undefined, activity: undefined })
-  })
+    selector: (state) => ({ ...state, $http: undefined, activity: undefined }),
+  }),
 ]);
 
 // If you want your app to work offline and load faster, you can change
